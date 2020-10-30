@@ -9,84 +9,57 @@ import ShagotomFragment from '../fragment/ShagotomFragment.js';
 import EkNojoreFragment from '../fragment/EkNojoreFragment.js';
 import HorizontalLine from './HorizontalLine.js';
 import DateTimePicker1 from '@react-native-community/datetimepicker';
-import Date2Fragment, {getDate1} from './Date2Fragment.js';
+import Date2Fragment, {getDate1} from '../fragment/Date2Fragment.js';
+import Date1Fragment from '../fragment/Date1Fragment.js';
 
 const BaseScreen2 = () => {
   var d1 = new Date();
   var d2 = new Date();
-  const [date1, setDate1] = useState(d1);
-  const [date2, setDate2] = useState(d2);
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
+  d2.setDate(d1.getDate() + 280);
+  
+  const callback = (index,date) => {
+      console.log("callback from "+index,date);
+      if(index === 1) {
+         d1 = new Date(date);
+         d2 = new Date();
+         d2.setDate(d1.getDate() + 280);
+      }
+      else if(index === 2) {
+        d2=new Date(date);
+      }
+      console.log(d1,d2);
+   }
+ 
+    //setInterval(() => {
+    //  console.log(d1,d2);
+    //},2000);
 
-  const onChangeDate1 = (event, selectedDate) => {
-    const currentDate = selectedDate || date1;
-    setShow(Platform.OS === 'ios'); 
-    setDate1(currentDate);
-    setDate2(currentDate)
-  };
+    const onPageSelected = (e) => {
+      //console.log('state is: '+ e.position)
+      console.log(d1,d2);
+      if(e.position === 2){
+         //Date2Fragment.update_ui(d2);
+      }
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
+    }
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  function myDate() {
-    return new Date(date2.setDate(date2.getDate() + 280))
-  }
 
   return (
-    <IndicatorViewPager
+    <IndicatorViewPager 
       style={styles.pagerStyle}
-      indicator={<PagerDotIndicator pageCount={4} />}>
+      indicator={<PagerDotIndicator pageCount={4} />
+      }
+      onPageSelected={onPageSelected}
+      >
       <View>
         <ShagotomFragment />
       </View>
-      <View style={styles.background1}>
-        <Text style={{marginBottom: 15, color: 'white', fontSize: 16}}>
-          তারিখ বদলাতে এখানে চাপুন
-        </Text>
-        <TouchableOpacity onPress={showDatepicker}>
-          <Image
-            style={[styles.datePickerLogo, {marginBottom: 35}]}
-            source={require('../images/icons8-planner-100.png')}
-          />
-        </TouchableOpacity>
-        <HorizontalLine />
-        <Text
-          style={{
-            marginBottom: 15,
-            fontWeight: 'bold',
-            fontSize: 30,
-            color: 'white',
-          }}>
-          শেষ মাসিক এর প্রথম দিন
-        </Text>
-        <Text
-          style={{
-            marginBottom: 15,
-            fontSize: 25,
-            color: 'white',
-          }}>
-          {date1.toString().substr(4, 6)}, {date1.toString().substr(11, 4)}
-        </Text>
-
-        {show && (
-          <DateTimePicker1
-            testID="dateTimePicker1"
-            value={date1}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChangeDate1}
-          />
-        )}
+      <View style={{flex: 1}}>
+        <Date1Fragment callback={callback} />
       </View>
-      <Date2Fragment mydate={date1}  />
+      <View style={{flex: 1}}>
+        <Date2Fragment  callback={callback} />
+      </View>
       <View>
         <EkNojoreFragment />
       </View>

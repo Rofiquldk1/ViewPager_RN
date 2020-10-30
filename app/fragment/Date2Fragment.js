@@ -1,32 +1,26 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, Button,StyleSheet} from 'react-native';
 import DateTimePicker2 from '@react-native-community/datetimepicker';
-import HorizontalLine from './HorizontalLine.js';
+import HorizontalLine from '../components/HorizontalLine.js';
 
-var date1,day,month,year;
-var day2,month2,year2;
-var check=0;
+var day,month,year;
 
-const Date2Fragment = ({mydate}) => {
-  var mDate = new Date(mydate);
-  mDate.setDate(mDate.getDate() + 280);
-
-  day = mDate.toString().substr(8,2);
-  month = mDate.toString().substr(4,3);
-  year = mDate.toString().substr(11,4);
-  
-  const [date, setPickedDate] = useState(mDate);
+const Date2Fragment = ({callback}) => {
+  var mDate = new Date();
+  const [date, setPickedDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
-  const [check, setCheck] = useState(0);
-  const [dateChanged, setDateChanged] = useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Platform.OS === 'ios');
     setPickedDate(currentDate);
-    setCheck(1);
-    setDateChanged(true);
+    callback(2,currentDate);
+
+    day = date.toString().substr(8,2);
+    month = date.toString().substr(4,3);
+    year = date.toString().substr(11,4);
+    
   };  
 
   const showMode = (currentMode) => {
@@ -37,17 +31,21 @@ const Date2Fragment = ({mydate}) => {
   const showDatepicker = () => {
     showMode('date');
   };
-
   
-  function viewDate() {    
-    day2 = date.toString().substr(8,2);
-    month2 = date.toString().substr(4,3);
-    year2 = date.toString().substr(11,4);
-    
+  const update_ui = (d2) => {
+    mDate = new Date(d2);
+    mDate.setDate(mDate.getDate());
+
+    day = mDate.toString().substr(8,2);
+    month = mDate.toString().substr(4,3);
+    year = mDate.toString().substr(11,4);
+  }
+
+  function viewDate() {       
     return (
       <View>
         <Text style={styles.dateShow}>
-          {day2}/{month2}/{year2}
+          {day}/{month}/{year}
         </Text>
         {show && (
         <DateTimePicker2
@@ -60,8 +58,7 @@ const Date2Fragment = ({mydate}) => {
         />
       )}
       </View>
-      );
-   
+      ); 
    }
 
     return (
